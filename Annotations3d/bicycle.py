@@ -1,4 +1,4 @@
-from enums import *
+from enums import status_dict, type_dict
 from entry import Entry
 
 class Bicycle(Entry):

@@ -1,8 +1,6 @@
 import json
 import requests
 import urllib
-from helpers import *
-from enums import *
 from bicycle import Bicycle
 from human import Human
 

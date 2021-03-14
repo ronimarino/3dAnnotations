@@ -1,4 +1,4 @@
-from enums import *
+from enums import wears_helmet_dict, age_dict
 from entry import Entry
 
 class Human(Entry):
