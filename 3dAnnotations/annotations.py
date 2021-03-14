@@ -1,16 +1,13 @@
 import json
 import requests
+import urllib
 from helpers import *
 from enums import *
 from bicycle import Bicycle
 from human import Human
 
-#TODO: cli arguments
-#TODO: cli help
-#TODO: split functions
 #TODO: tests
-#TODO: error handlin & log 
-#TODO: log level option cli argument
+#TODO: error handlin & log - dict keywords checks
 #TODO: improve readme (cli help kopiraj, setup kako se radi)
 
 
@@ -24,7 +21,7 @@ def main(args=None):
 
     parser = argparse.ArgumentParser(prog='annotations', description='Command line interface for Export 3d Annotations')
     parser.add_argument(
-        'input_json', default='annotations.json', help='Input file'
+        'input_json', default='annotations.json', help='Input file or web url'
     )
     parser.add_argument(
         'output_json', default='output.json', help='Output file'
@@ -38,13 +35,21 @@ def main(args=None):
 
     # Parse all command line arguments
     args = parser.parse_args(args)
-
+    if args.loglevel == 'debug':
+        log.setLevel(logging.DEBUG)
+    elif args.loglevel == 'warning':
+        log.setLevel(logging.WARNING)
+    elif args.loglevel == 'error':
+        log.setLevel(logging.ERROR)
+    elif args.loglevel == 'critical':
+        log.setLevel(logging.CRITICAL)
+    
     if hasattr(args, 'input_json') and hasattr(args, 'output_json'):
         convert_json(args.input_json, args.output_json)
-        return 0
+        return
     else:
         parser.print_help()
-        return 0
+        return
 
     # log.debug('some debug')
     # log.info('some info')
@@ -54,11 +59,20 @@ def main(args=None):
 def parse_annotations_from_file(input_json):
     annotations_list = None
     try:
-        with open(input_json) as input_json_file:
-            annotations_list = json.load(input_json_file)
+        if urllib.parse.urlparse(input_json).scheme != "":
+            response = requests.get(input_json)
+            annotations_list = json.loads(response.text)
+            #https://jsonplaceholder.typicode.com/todos
+        else:
+            with open(input_json) as input_json_file:
+                annotations_list = json.load(input_json_file)
     except (FileNotFoundError, IOError):
-        log.error('Can\'t open the file ' + input_json)
+        log.error('Can\'t open the file' + input_json)
         return []
+    except (json.JSONDecodeError):
+        log.error('Could not decode json file!')
+        return []
+
     
     parsed_list = []
     if annotations_list:
@@ -145,10 +159,6 @@ def convert_json(input_json, output_json):
 
         with open(output_json, 'w') as outfile:
             json.dump(output_dict, outfile, indent=2)
-
-        #TODO 
-        #response = requests.get("https://jsonplaceholder.typicode.com/todos")
-        #todos = json.loads(response.text)
 
 main()
 
