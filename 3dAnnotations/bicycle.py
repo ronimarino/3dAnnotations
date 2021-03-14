@@ -15,19 +15,17 @@ class Bicycle:
     rider_id = 0
 
     def __init__(self, data):
-        self.annotation_id = data.annotation_id
-        self.temporal_id = data.temporal_id
-        self.frame_id = data.frame_id
-        self.label = data.label
-        self.position = [-data.position[2], -data.position[0], data.position[1]] # converting to customer CS
+        self.annotation_id = data['annotationId']
+        self.temporal_id = data['temporalId']
+        self.frame_id = data['frameId']
+        self.label = data['label']
+        self.position = [-data['z'], -data['x'], data['y']] # converting to customer CS
         # UAI y = yaw, x = roll, z = pitch UAI
-        orientation = [data.orientation[0], data.orientation[1], data.orientation[2]] # yaw, pitch, roll
+        orientation = (data['yaw'] * np.pi / 180., data['pitch'] * np.pi / 180., data['roll'] * np.pi / 180.) # yaw, pitch, roll
         self.orientation = euler_to_quaternion(orientation[0], orientation[1], orientation[2])
-        #import pdb
-        #pdb.set_trace()
-        self.size = [data.size[2], data.size[0], data.size[1]]
-        self.status = status_dict[data.attributes['status']]
-        self.b_type = type_dict[data.attributes['type']]
+        self.size = [data['width'], data['length'], data['height']] # converting to customer CS
+        self.status = status_dict[data['attributes']['status']]
+        self.b_type = type_dict[data['attributes']['type']]
 
 
 

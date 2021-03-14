@@ -6,14 +6,13 @@ from annotation_input import AnnotationInput
 from bicycle import Bicycle
 from human import Human
 
-#TODO: kreni pushat na github
 #TODO: cli arguments
 #TODO: cli help
-#TODO: ove funkcije razdvojiti
-#TODO: testovi
-#TODO: error handlin i log 
-#TODO: opcija log levela kao cli argument
-#TODO: bolji readme (cli help kopiraj, setup kako se radi)
+#TODO: split functions
+#TODO: tests
+#TODO: error handlin & log 
+#TODO: log level option cli argument
+#TODO: improve readme (cli help kopiraj, setup kako se radi)
 #TODO: Entry klasa koju nasljedjuju Bicycle i Human
 #TODO: Parsiranje da je u Bycicle i Human klasama
 #TODO: BicycleWithRider klasu
@@ -29,10 +28,10 @@ def main(args=None):
 
     parser = argparse.ArgumentParser(prog='annotations', description='Command line interface for Export 3d Annotations')
     parser.add_argument(
-        'input.json', default='annotations.json', help='Input file'
+        'input_json', default='annotations.json', help='Input file'
     )
     parser.add_argument(
-        'output.json', default='output.json', help='Output file'
+        'output_json', default='output.json', help='Output file'
     )
     parser.add_argument(
         '--loglevel', default='info', help='Log level',
@@ -44,26 +43,20 @@ def main(args=None):
     # Parse all command line arguments
     args = parser.parse_args(args)
 
-    # This is not a good way to handle the cases
-    # where help should be printed.
-    # TODO: there must be a better way?
-    if hasattr(args, 'func'):
-        # Call the desired subcommand function
-        logging.basicConfig(level=args.loglevel.upper())
-        args.func(args)
+    if hasattr(args, 'input_json') and hasattr(args, 'output_json'):
+        run(args.input_json, args.output_json)
         return 0
     else:
-        #parser.print_help()
-        run()
+        parser.print_help()
         return 0
 
     # log.debug('some debug')
     # log.info('some info')
-    log.warning('some warning')
+    # log.warning('some warning')
 
-def run():
+def run(input_json, output_json):
     annotations_list = None
-    with open('../annotations.json') as input_json_file:  #add command line args
+    with open(input_json) as input_json_file:
         annotations_list = json.load(input_json_file)
             
     if annotations_list:
@@ -72,14 +65,12 @@ def run():
         current_frame_id = -1
         parsed_list = []
         for annotation_input in annotations_list:
-            annotation = AnnotationInput(annotation_input)
-
-            if annotation.label == 'HUMAN':
-                human = Human(annotation)
+            if annotation_input['label'] == 'HUMAN':
+                human = Human(annotation_input)
                 parsed_list.append(human)
 
-            elif annotation.label == 'BICYCLE':
-                bicycle = Bicycle(annotation)
+            elif annotation_input['label'] == 'BICYCLE':
+                bicycle = Bicycle(annotation_input)
                 parsed_list.append(bicycle)
         
         if len(annotations_list) == len(parsed_list):
@@ -128,7 +119,7 @@ def run():
                 
                 current_frame_id = item.frame_id
 
-        with open('output.json', 'w') as outfile:
+        with open(output_json, 'w') as outfile:
             json.dump(output_dict, outfile, indent=2)
 
             
