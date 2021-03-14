@@ -12,7 +12,6 @@ from human import Human
 #TODO: error handlin & log 
 #TODO: log level option cli argument
 #TODO: improve readme (cli help kopiraj, setup kako se radi)
-#TODO: Parsiranje da je u Bycicle i Human klasama
 
 
 import logging
@@ -54,8 +53,12 @@ def main(args=None):
 
 def parse_annotations_from_file(input_json):
     annotations_list = None
-    with open(input_json) as input_json_file:
-        annotations_list = json.load(input_json_file)
+    try:
+        with open(input_json) as input_json_file:
+            annotations_list = json.load(input_json_file)
+    except (FileNotFoundError, IOError):
+        log.error('Can\'t open the file ' + input_json)
+        return []
     
     parsed_list = []
     if annotations_list:
