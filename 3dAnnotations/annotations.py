@@ -13,7 +13,6 @@ from human import Human
 #TODO: log level option cli argument
 #TODO: improve readme (cli help kopiraj, setup kako se radi)
 #TODO: Parsiranje da je u Bycicle i Human klasama
-#TODO: BicycleWithRider klasu
 
 
 import logging
@@ -42,7 +41,7 @@ def main(args=None):
     args = parser.parse_args(args)
 
     if hasattr(args, 'input_json') and hasattr(args, 'output_json'):
-        run(args.input_json, args.output_json)
+        convert_json(args.input_json, args.output_json)
         return 0
     else:
         parser.print_help()
@@ -52,80 +51,101 @@ def main(args=None):
     # log.info('some info')
     # log.warning('some warning')
 
-def run(input_json, output_json):
+
+def parse_annotations_from_file(input_json):
     annotations_list = None
     with open(input_json) as input_json_file:
         annotations_list = json.load(input_json_file)
-            
+    
+    parsed_list = []
     if annotations_list:
-        output_dict = {}
-        output_dict['FRAMES'] = []
-        current_frame_id = -1
-        parsed_list = []
+        rider_bike_dict = {} # used for assigning rider to bike
+        temporal_id_object_id_dict = {} # used for reusing of object id if object already appeared
+        
+        object_id = 0
+
+        # instead of object_id, human_id and bicycle_id can be used 
+        # human_id = 0
+        # bicycle_id = 0
         for annotation_input in annotations_list:
             if annotation_input['label'] == 'HUMAN':
                 human = Human(annotation_input)
+                if human.temporal_id in temporal_id_object_id_dict.keys():
+                    human.human_id = temporal_id_object_id_dict[human.temporal_id]
+                else:
+                    human.human_id = object_id
+                    temporal_id_object_id_dict[human.temporal_id] = object_id
+                    object_id+=1
+                if human.bicycle_id != '':
+                    rider_bike_dict[human.bicycle_id] = (human.temporal_id, human.human_id)
                 parsed_list.append(human)
 
             elif annotation_input['label'] == 'BICYCLE':
                 bicycle = Bicycle(annotation_input)
+                if bicycle.temporal_id in temporal_id_object_id_dict.keys():
+                    bicycle.bicycle_id = temporal_id_object_id_dict[bicycle.temporal_id]
+                else:
+                    bicycle.bicycle_id = object_id
+                    temporal_id_object_id_dict[bicycle.temporal_id] = object_id
+                    object_id+=1
                 parsed_list.append(bicycle)
-        
-        if len(annotations_list) == len(parsed_list):
-            rider_bike_dict = {}
-            for i, item in enumerate(parsed_list):
-                if isinstance(item, Human):
-                    item.human_id = i
-                    if item.bicycle_id != '':
-                        rider_bike_dict[item.bicycle_id] = (item.temporal_id, item.human_id)
-                elif isinstance(item, Bicycle):
-                    item.bicycle_id = i
 
-            for item in parsed_list:
-                if isinstance(item, Bicycle):
-                    if item.temporal_id in rider_bike_dict.keys():
-                        item.rider_id = rider_bike_dict[item.temporal_id][1]
+        for item in parsed_list:
+            if isinstance(item, Bicycle):
+                if item.temporal_id in rider_bike_dict.keys():
+                    item.rider_id = rider_bike_dict[item.temporal_id][1]
+                else:
+                    item.rider_id = 'null'
+
+    if len(annotations_list) != len(parsed_list):
+        log.warning('Unrecognized annotations found in input json!')
+    return parsed_list
+
+
+def convert_json(input_json, output_json):
+    parsed_list = parse_annotations_from_file(input_json)
+    if len(parsed_list) > 0:
+        output_dict = {}
+        output_dict['FRAMES'] = []
+        current_frame_id = -1
+
+        for item in parsed_list:
+            if current_frame_id != item.frame_id:
+                frame_dict = {'FRAME_ID':item.frame_id}
+                if item.label == 'HUMAN':
+                    frame_dict['BICYCLES'] = []
+                    humans_dict = generate_human_dict(item)
+                    frame_dict['HUMANS'] = [humans_dict,]
+
+                elif item.label == 'BICYCLE':
+                    bicycles_dict = generate_bicycle_dict(item)
+                    frame_dict['BICYCLES'] = [bicycles_dict,]
+                    frame_dict['HUMANS'] = []
+                    output_dict['FRAMES'].append(frame_dict)
+            else:
+                frame_dict = output_dict['FRAMES'][-1]
+                if item.label == 'HUMAN':
+                    humans_dict = generate_human_dict(item)
+                    if 'HUMANS' in frame_dict.keys():
+                        frame_dict['HUMANS'].append(humans_dict)
                     else:
-                        item.rider_id = 'null'
-                if current_frame_id != item.frame_id:
-                    frame_dict = {'FRAME_ID':item.frame_id}
-                    if item.label == 'HUMAN':
-                        frame_dict['BICYCLES'] = []
-                        humans_dict = generate_human_dict(item)
                         frame_dict['HUMANS'] = [humans_dict,]
 
-                    elif item.label == 'BICYCLE':
-                        bicycles_dict = generate_bicycle_dict(item)
+                elif item.label == 'BICYCLE':
+                    bicycles_dict = generate_bicycle_dict(item)
+                    if 'BICYCLES' in frame_dict.keys():
+                        frame_dict['BICYCLES'].append(bicycles_dict)
+                    else:
                         frame_dict['BICYCLES'] = [bicycles_dict,]
-                        frame_dict['HUMANS'] = []
-                        output_dict['FRAMES'].append(frame_dict)
-                else:
-                    frame_dict = output_dict['FRAMES'][-1]
-                    if item.label == 'HUMAN':
-                        humans_dict = generate_human_dict(item)
-                        if 'HUMANS' in frame_dict.keys():
-                            frame_dict['HUMANS'].append(humans_dict)
-                        else:
-                            frame_dict['HUMANS'] = [humans_dict,]
-
-                    elif item.label == 'BICYCLE':
-                        bicycles_dict = generate_bicycle_dict(item)
-                        if 'BICYCLES' in frame_dict.keys():
-                            frame_dict['BICYCLES'].append(bicycles_dict)
-                        else:
-                            frame_dict['BICYCLES'] = [bicycles_dict,]
-                
-                current_frame_id = item.frame_id
+            
+            current_frame_id = item.frame_id
 
         with open(output_json, 'w') as outfile:
             json.dump(output_dict, outfile, indent=2)
 
-            
-            
-
-
-        response = requests.get("https://jsonplaceholder.typicode.com/todos")
-        todos = json.loads(response.text)
+        #TODO 
+        #response = requests.get("https://jsonplaceholder.typicode.com/todos")
+        #todos = json.loads(response.text)
 
 main()
 
