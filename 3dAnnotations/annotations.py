@@ -2,7 +2,6 @@ import json
 import requests
 from helpers import *
 from enums import *
-from annotation_input import AnnotationInput
 from bicycle import Bicycle
 from human import Human
 
@@ -13,7 +12,6 @@ from human import Human
 #TODO: error handlin & log 
 #TODO: log level option cli argument
 #TODO: improve readme (cli help kopiraj, setup kako se radi)
-#TODO: Entry klasa koju nasljedjuju Bicycle i Human
 #TODO: Parsiranje da je u Bycicle i Human klasama
 #TODO: BicycleWithRider klasu
 

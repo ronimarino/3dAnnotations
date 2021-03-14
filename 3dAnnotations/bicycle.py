@@ -1,15 +1,9 @@
 from helpers import *
 from enums import *
+from entry import Entry
 
-class Bicycle:
-    annotation_id = 0
-    bicycle_id = None
-    temporal_id = 0
-    frame_id = 0
-    label = ''
-    position = [0, 0, 0]
-    orientation = [0,0,0,1]
-    size = [1,1,1]
+class Bicycle(Entry):
+    bicycle_id = 0
     status = 0
     b_type = 0
     rider_id = 0

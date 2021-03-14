@@ -1,15 +1,9 @@
 from helpers import *
 from enums import *
+from entry import Entry
 
-class Human:
-    annotation_id = 0
-    human_id = None
-    temporal_id = 0
-    frame_id = 0
-    label = ''
-    position = [0, 0, 0]
-    orientation = [0,0,0,1]
-    size = [1,1,1]
+class Human(Entry):
+    human_id = 0
     wears_helmet = 0
     age = 0
     bicycle_id = 0
