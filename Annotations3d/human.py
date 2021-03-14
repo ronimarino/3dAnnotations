@@ -1,4 +1,3 @@
-from helpers import *
 from enums import *
 from entry import Entry
 
@@ -13,6 +12,17 @@ class Human(Entry):
             self.wears_helmet = wears_helmet_dict[data['attributes']['wears_helmet']]
         else:
             self.wears_helmet = 'null'
+
+        
+    def generate_human_dict(self):
+        return {
+            'HUMAN_ID' : self.human_id,
+            'POSITION' : self.position,
+            'ORIENTATION' : self.orientation,
+            'SIZE' : self.size,
+            'WEARS_HELMET' : self.wears_helmet,
+            'AGE' : self.age 
+        }
 
 
 

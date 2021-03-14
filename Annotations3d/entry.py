@@ -1,7 +1,6 @@
 # Base class for bicycle and human objects
 import numpy as np
-from helpers import *
-from enums import *
+from helpers import euler_to_quaternion
 
 class Entry:
 
@@ -15,3 +14,18 @@ class Entry:
         orientation = (data['yaw'] * np.pi / 180., data['pitch'] * np.pi / 180., data['roll'] * np.pi / 180.) # yaw, pitch, roll
         self.orientation = euler_to_quaternion(orientation[0], orientation[1], orientation[2])
         self.size = [data['width'], data['length'], data['height']] # converting to customer CS
+
+    def flush_data(self, frame_dict, new_frame=False):
+        if new_frame:
+            frame_dict['BICYCLES'] = []
+            frame_dict['HUMANS'] = []
+
+        if self.label == 'HUMAN':
+            humans_dict = self.generate_human_dict()
+            frame_dict['HUMANS'].append(humans_dict)
+
+        elif self.label == 'BICYCLE':
+            bicycles_dict = self.generate_bicycle_dict()
+            frame_dict['BICYCLES'].append(bicycles_dict)
+            
+        

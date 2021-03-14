@@ -125,42 +125,23 @@ def convert_json(input_json, output_json):
         output_dict = {}
         output_dict['FRAMES'] = []
         current_frame_id = -1
-
+        
         for item in parsed_list:
+            new_frame = False
             if current_frame_id != item.frame_id:
                 frame_dict = {'FRAME_ID':item.frame_id}
-                if item.label == 'HUMAN':
-                    frame_dict['BICYCLES'] = []
-                    humans_dict = generate_human_dict(item)
-                    frame_dict['HUMANS'] = [humans_dict,]
-
-                elif item.label == 'BICYCLE':
-                    bicycles_dict = generate_bicycle_dict(item)
-                    frame_dict['BICYCLES'] = [bicycles_dict,]
-                    frame_dict['HUMANS'] = []
-                    output_dict['FRAMES'].append(frame_dict)
+                new_frame = True
+                output_dict['FRAMES'].append(frame_dict)
             else:
                 frame_dict = output_dict['FRAMES'][-1]
-                if item.label == 'HUMAN':
-                    humans_dict = generate_human_dict(item)
-                    if 'HUMANS' in frame_dict.keys():
-                        frame_dict['HUMANS'].append(humans_dict)
-                    else:
-                        frame_dict['HUMANS'] = [humans_dict,]
-
-                elif item.label == 'BICYCLE':
-                    bicycles_dict = generate_bicycle_dict(item)
-                    if 'BICYCLES' in frame_dict.keys():
-                        frame_dict['BICYCLES'].append(bicycles_dict)
-                    else:
-                        frame_dict['BICYCLES'] = [bicycles_dict,]
-            
+            item.flush_data(frame_dict, new_frame=new_frame)
             current_frame_id = item.frame_id
 
         with open(output_json, 'w') as outfile:
             json.dump(output_dict, outfile, indent=2)
 
-main()
+if __name__ == "__main__":
+   main()
 
 
 

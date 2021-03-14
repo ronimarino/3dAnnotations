@@ -27,24 +27,4 @@ def quaternion_to_euler(q):
     yaw = math.atan2(t3, t4)
     return [yaw, pitch, roll]
 
-def generate_human_dict(human):
-    return {
-        'HUMAN_ID' : human.human_id,
-        'POSITION' : human.position,
-        'ORIENTATION' : human.orientation,
-        'SIZE' : human.size,
-        'WEARS_HELMET' : human.wears_helmet,
-        'AGE' : human.age 
-    }
-
-def generate_bicycle_dict(bicycle):
-    return {
-        'BICYCLE_ID' : bicycle.bicycle_id,
-        'POSITION' : bicycle.position,
-        'ORIENTATION' : bicycle.orientation,
-        'SIZE' : bicycle.size,
-        'STATUS' : bicycle.status,
-        'RIDER' : bicycle.rider_id,
-        'TYPE' : bicycle.b_type
-    }
 

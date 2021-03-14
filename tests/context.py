@@ -1,7 +1,9 @@
-# -*- coding: utf-8 -*-
-
-import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../3dAnnotations')))
+import sys
+sys.path.insert(0, os.path.abspath('../Annotations3d/Annotations3d'))
 
+import Annotations3d
+import helpers
 import annotations
+#from Annotations3d import helpers
+#from Annotations3d import annotations

@@ -11,8 +11,8 @@ type_dict = {
 }
 
 wears_helmet_dict = {
-    False : '0',
-    True : '1'
+    False : 0,
+    True : 1
 }
 
 age_dict = {
