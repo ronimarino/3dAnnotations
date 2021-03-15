@@ -8,6 +8,7 @@ Navigate to project folder in command line and run the following line:
 -input-annotations-json-file- can also be url to json file.
 
 For running tests navigate to project folder and run:
-  python -m unittest tests.test_advanced
-  python -m unittest tests.test_basic
+  >python -m unittest tests.test_advanced
+  >
+  >python -m unittest tests.test_basic
   
