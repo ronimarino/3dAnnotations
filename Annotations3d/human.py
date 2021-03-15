@@ -7,7 +7,9 @@ class Human(Entry):
     def __init__(self, data):
 
         super().__init__(data)
-        data_valid = set(keyword_list_human_attributes).issubset(set(data['attributes'].keys()))
+        data_valid = True
+        if 'attributes' in data.keys():
+            data_valid = set(keyword_list_human_attributes).issubset(set(data['attributes'].keys()))
         if data_valid:
             self.age = age_dict[data['attributes']['age']]
             self.bicycle_id = data['attributes']['rides_on_bicycle']
@@ -16,6 +18,7 @@ class Human(Entry):
             else:
                 self.wears_helmet = None
         else:
+            self.is_valid = False
             self.age = None
             self.bicycle_id = None
             self.wears_helmet = None

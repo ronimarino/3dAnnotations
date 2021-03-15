@@ -19,14 +19,22 @@ class Entry:
             orientation = (data['yaw'] * np.pi / 180., data['pitch'] * np.pi / 180., data['roll'] * np.pi / 180.) # yaw, pitch, roll
             self.orientation = euler_to_quaternion(orientation[0], orientation[1], orientation[2])
             self.size = [data['width'], data['length'], data['height']] # converting to customer CS
+            self.is_valid = True
         else:
-            self.annotation_id = None
-            self.temporal_id = None
+            if 'annotationId' in data.keys():
+                self.annotation_id = data['annotationId']
+            else:
+                self.annotation_id = None
+            if 'temporalId' in data.keys():
+                self.temporal_id = data['temporalId']
+            else:
+                self.temporal_id = None
             self.frame_id = None
             self.label = None
             self.position = [0., 0., 0.]
             self.orientation = [0., 0., 0., 1.]
             self.size = [0., 0., 0.]
+            self.is_valid = False
 
 
     def flush_data(self, frame_dict, new_frame=False):
