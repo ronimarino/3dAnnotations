@@ -5,14 +5,10 @@ from .context import annotations
 from .context import bicycle
 from .context import human
 
-'''
-To have a complete set of manual tests,
-all you need to do is make a list of all the features your application has,
-the different types of input it can accept, and the expected results.
-'''
 
 class BasicTests(unittest.TestCase):
     """Basic test cases."""
+
 
     def test_euler_to_quaternion(self):
         self.assertEqual(helpers.euler_to_quaternion(0., 0., 0.), [0,0,0,1])
@@ -36,7 +32,6 @@ class BasicTests(unittest.TestCase):
         self.assertEqual(len(parsed_list), 30)
         self.assertIsInstance(parsed_list[0], bicycle.Bicycle)
         self.assertIsInstance(parsed_list[1], human.Human)
-
 
 
 if __name__ == '__main__':

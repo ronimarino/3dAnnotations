@@ -12,6 +12,7 @@ def euler_to_quaternion(yaw, pitch, roll):
 
     return [qx, qy, qz, qw]
 
+
 # not used for this purpose, but could be useful for import of customer data
 def quaternion_to_euler(q):
     (x, y, z, w) = (q[0], q[1], q[2], q[3])

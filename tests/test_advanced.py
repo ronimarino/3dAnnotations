@@ -5,9 +5,9 @@ from .context import annotations
 
 
 
-
 class AdvancedTests(unittest.TestCase):
     """Advanced test cases."""
+
 
     def test_convert_json(self):
         annotations.convert_json('docs/example_annotations.json', 'docs/test_output.json')

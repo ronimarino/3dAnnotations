@@ -2,7 +2,10 @@
 import numpy as np
 from helpers import euler_to_quaternion, keyword_list_general
 
+
+
 class Entry:
+
 
     def __init__(self, data):
         data_valid = set(keyword_list_general).issubset(set(data.keys()))
@@ -38,5 +41,3 @@ class Entry:
         elif self.label == 'BICYCLE':
             bicycles_dict = self.generate_bicycle_dict()
             frame_dict['BICYCLES'].append(bicycles_dict)
-            
-        

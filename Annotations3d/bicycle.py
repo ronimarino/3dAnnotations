@@ -2,7 +2,10 @@ from enums import status_dict, type_dict
 from entry import Entry
 from helpers import keyword_list_bike_attributes
 
+
+
 class Bicycle(Entry):
+
 
     def __init__(self, data):
         super().__init__(data)
@@ -13,6 +16,7 @@ class Bicycle(Entry):
         else:
             self.status = None
             self.b_type = None
+
     
     def generate_bicycle_dict(self):
         return {

@@ -4,10 +4,7 @@ import urllib
 from bicycle import Bicycle
 from human import Human
 
-#TODO: error handlin & log - dict keywords checks
-#TODO: improve readme (cli help kopiraj, setup kako se radi)
 #TODO: sort out human_id - object_id - bicycle_id
-
 
 import logging
 import argparse
@@ -15,9 +12,9 @@ import argparse
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
+
 def main(args=None):
     args = init_logging(args)
-
     if hasattr(args, 'input_json') and hasattr(args, 'output_json'):
         convert_json(args.input_json, args.output_json)
         return
@@ -151,6 +148,7 @@ def convert_json(input_json, output_json):
 
         with open(output_json, 'w') as outfile:
             json.dump(output_dict, outfile, indent=2)
+
 
 if __name__ == "__main__":
    main()
