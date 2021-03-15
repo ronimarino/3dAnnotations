@@ -33,6 +33,61 @@ class BasicTests(unittest.TestCase):
         self.assertIsInstance(parsed_list[0], bicycle.Bicycle)
         self.assertIsInstance(parsed_list[1], human.Human)
 
+    
+    def test_generate_dicts(self):
+        parsed_list = annotations.parse_annotations('docs/example_annotations.json')
+        bike = parsed_list[0]
+        person = parsed_list[1]
+        test_bike_dict = {
+          "BICYCLE_ID": 0,
+          "POSITION": [
+            6.214051078965763,
+            -1.6141740617314968,
+            -1.1567630666763957
+          ],
+          "ORIENTATION": [
+            -0.005390844858319934,
+            0.004885218172705003,
+            0.8069478741049281,
+            0.5905778542348636
+          ],
+          "SIZE": [
+            0.38506336808139396,
+            1.7546858722619847,
+            1.12662733359948
+          ],
+          "STATUS": 0,
+          "RIDER": 1,
+          "TYPE": 0
+        }
+        test_human_dict = {
+          "HUMAN_ID": 1,
+          "POSITION": [
+            6.08933372191161,
+            -1.6203931711134456,
+            -0.8208160370426799
+          ],
+          "ORIENTATION": [
+            -0.005390844858319934,
+            0.004885218172705003,
+            0.8069478741049281,
+            0.5905778542348636
+          ],
+          "SIZE": [
+            0.5008161429394367,
+            0.8935028422787278,
+            1.586688306599624
+          ],
+          "WEARS_HELMET": 0,
+          "AGE": 0
+        }
+        bike_dict = bike.generate_bicycle_dict()
+        human_dict = person.generate_human_dict()
+        self.assertEqual(test_bike_dict, bike_dict)
+        self.assertEqual(test_human_dict, human_dict)
+
+
+
 
 if __name__ == '__main__':
     unittest.main()
