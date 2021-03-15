@@ -12,3 +12,4 @@ For running tests navigate to project folder and run:
   >
   >python -m unittest tests.test_basic
   
+Log is written in root application folder (Annotations3d) in file 'annotations.log'.
