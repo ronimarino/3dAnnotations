@@ -28,3 +28,32 @@ def quaternion_to_euler(q):
     return [yaw, pitch, roll]
 
 
+keyword_list_general = [
+    'annotationId',
+    'frameId',
+    'temporalId',
+    'label',
+    'attributes',
+    'x',
+    'y',
+    'z',
+    'roll',
+    'pitch',
+    'yaw',
+    'length',
+    'height',
+    'width',
+    ]
+
+keyword_list_bike_attributes = [
+    'status',
+    'type',
+    ]
+
+keyword_list_human_attributes = [
+    'wears_helmet',
+    'age',
+    'rides_on_bicycle',
+    ]
+
+

@@ -86,25 +86,35 @@ def parse_annotations(input_json):
             label_exists = 'label' in annotation_input.keys()
             if label_exists and annotation_input['label'] == 'HUMAN':
                 human = Human(annotation_input)
-                if human.temporal_id in temporal_id_object_id_dict.keys():
-                    human.human_id = temporal_id_object_id_dict[human.temporal_id]
+                if not human.annotation_id:
+                    log.warning('Corrupted annotation detected!')
+                elif human.age is None:
+                    log.warning('Corrupted annotation attributes detected!')
                 else:
-                    human.human_id = object_id
-                    temporal_id_object_id_dict[human.temporal_id] = object_id
-                    object_id+=1
-                if human.bicycle_id != '':
-                    rider_bike_dict[human.bicycle_id] = (human.temporal_id, human.human_id)
-                parsed_list.append(human)
+                    if human.temporal_id in temporal_id_object_id_dict.keys():
+                        human.human_id = temporal_id_object_id_dict[human.temporal_id]
+                    else:
+                        human.human_id = object_id
+                        temporal_id_object_id_dict[human.temporal_id] = object_id
+                        object_id+=1
+                    if human.bicycle_id != '':
+                        rider_bike_dict[human.bicycle_id] = (human.temporal_id, human.human_id)
+                    parsed_list.append(human)
 
             elif label_exists and annotation_input['label'] == 'BICYCLE':
                 bicycle = Bicycle(annotation_input)
-                if bicycle.temporal_id in temporal_id_object_id_dict.keys():
-                    bicycle.bicycle_id = temporal_id_object_id_dict[bicycle.temporal_id]
+                if not bicycle.annotation_id:
+                    log.warning('Corrupted annotation detected!')
+                elif bicycle.status is None:
+                    log.warning('Corrupted annotation attributes detected!')
                 else:
-                    bicycle.bicycle_id = object_id
-                    temporal_id_object_id_dict[bicycle.temporal_id] = object_id
-                    object_id+=1
-                parsed_list.append(bicycle)
+                    if bicycle.temporal_id in temporal_id_object_id_dict.keys():
+                        bicycle.bicycle_id = temporal_id_object_id_dict[bicycle.temporal_id]
+                    else:
+                        bicycle.bicycle_id = object_id
+                        temporal_id_object_id_dict[bicycle.temporal_id] = object_id
+                        object_id+=1
+                    parsed_list.append(bicycle)
 
             elif not label_exists:
                 log.error('Input json file is missing label keyword! Not able to parse it.')
@@ -114,7 +124,7 @@ def parse_annotations(input_json):
                 if item.temporal_id in rider_bike_dict.keys():
                     item.rider_id = rider_bike_dict[item.temporal_id][1]
                 else:
-                    item.rider_id = 'null'
+                    item.rider_id = None
 
         if len(annotations_list) != len(parsed_list):
             log.warning('Unrecognized annotations found in input json!')
