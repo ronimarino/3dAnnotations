@@ -16,28 +16,14 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 def main(args=None):
-    parser = init_logging(args)
-    # Parse all command line arguments
-    args = parser.parse_args(args)
-    if args.loglevel == 'debug':
-        log.setLevel(logging.DEBUG)
-    elif args.loglevel == 'warning':
-        log.setLevel(logging.WARNING)
-    elif args.loglevel == 'error':
-        log.setLevel(logging.ERROR)
-    elif args.loglevel == 'critical':
-        log.setLevel(logging.CRITICAL)
-    
+    args = init_logging(args)
+
     if hasattr(args, 'input_json') and hasattr(args, 'output_json'):
         convert_json(args.input_json, args.output_json)
         return
     else:
         parser.print_help()
         return
-
-    # log.debug('some debug')
-    # log.info('some info')
-    # log.warning('some warning')
 
 
 def init_logging(args):
@@ -52,7 +38,18 @@ def init_logging(args):
         '--loglevel', default='info', help='Log level',
         choices=['debug', 'info', 'warning', 'error', 'critical'],
     )
-    return parser
+
+    # Parse all command line arguments
+    args = parser.parse_args(args)
+    if args.loglevel == 'debug':
+        log.setLevel(logging.DEBUG)
+    elif args.loglevel == 'warning':
+        log.setLevel(logging.WARNING)
+    elif args.loglevel == 'error':
+        log.setLevel(logging.ERROR)
+    elif args.loglevel == 'critical':
+        log.setLevel(logging.CRITICAL)
+    return args
 
 
 def load_json_from_file_url(input_json):
