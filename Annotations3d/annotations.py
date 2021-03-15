@@ -9,8 +9,8 @@ from human import Human
 import logging
 import argparse
 
+logging.basicConfig(filename='annotations.log', level=logging.INFO)
 log = logging.getLogger(__name__)
-log.setLevel(logging.INFO)
 
 
 def main(args=None):
@@ -114,7 +114,10 @@ def parse_annotations(input_json):
                     parsed_list.append(bicycle)
 
             elif not label_exists:
-                log.error('Input json file is missing label keyword! Not able to parse it.')
+                if 'annotationId' in annotation_input.keys():
+                    log.error('Input json file is missing label keyword! AnnotationId = ' + annotation_input['annotationId'])
+                else:
+                    log.error('Input json file is missing label keyword!')
 
         for item in parsed_list:
             if isinstance(item, Bicycle):
