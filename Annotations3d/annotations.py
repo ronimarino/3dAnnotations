@@ -7,6 +7,7 @@ from human import Human
 #TODO: tests
 #TODO: error handlin & log - dict keywords checks
 #TODO: improve readme (cli help kopiraj, setup kako se radi)
+#TODO: sort out human_id - object_id - bicycle_id
 
 
 import logging
@@ -16,21 +17,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 def main(args=None):
-
-    parser = argparse.ArgumentParser(prog='annotations', description='Command line interface for Export 3d Annotations')
-    parser.add_argument(
-        'input_json', default='annotations.json', help='Input file or web url'
-    )
-    parser.add_argument(
-        'output_json', default='output.json', help='Output file'
-    )
-    parser.add_argument(
-        '--loglevel', default='info', help='Log level',
-        choices=['debug', 'info', 'warning', 'error', 'critical'],
-    )
-    
-
-
+    parser = init_logging(args)
     # Parse all command line arguments
     args = parser.parse_args(args)
     if args.loglevel == 'debug':
@@ -54,8 +41,23 @@ def main(args=None):
     # log.warning('some warning')
 
 
-def parse_annotations_from_file(input_json):
-    annotations_list = None
+def init_logging(args):
+    parser = argparse.ArgumentParser(prog='annotations', description='Command line interface for Export 3d Annotations')
+    parser.add_argument(
+        'input_json', default='annotations.json', help='Input file or web url'
+    )
+    parser.add_argument(
+        'output_json', default='output.json', help='Output file'
+    )
+    parser.add_argument(
+        '--loglevel', default='info', help='Log level',
+        choices=['debug', 'info', 'warning', 'error', 'critical'],
+    )
+    return parser
+
+
+def load_json_from_file_url(input_json):
+    annotations_list = []
     try:
         if urllib.parse.urlparse(input_json).scheme != "":
             response = requests.get(input_json)
@@ -64,14 +66,17 @@ def parse_annotations_from_file(input_json):
         else:
             with open(input_json) as input_json_file:
                 annotations_list = json.load(input_json_file)
+        return annotations_list
     except (FileNotFoundError, IOError):
         log.error('Can\'t open the file' + input_json)
-        return []
+        return None
     except (json.JSONDecodeError):
         log.error('Could not decode json file!')
-        return []
+        return None
 
-    
+
+def parse_annotations_from_file(input_json):
+    annotations_list = load_json_from_file_url(input_json)
     parsed_list = []
     if annotations_list:
         rider_bike_dict = {} # used for assigning rider to bike
@@ -112,8 +117,8 @@ def parse_annotations_from_file(input_json):
                 else:
                     item.rider_id = 'null'
 
-    if len(annotations_list) != len(parsed_list):
-        log.warning('Unrecognized annotations found in input json!')
+        if len(annotations_list) != len(parsed_list):
+            log.warning('Unrecognized annotations found in input json!')
     return parsed_list
 
 
