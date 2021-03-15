@@ -4,7 +4,6 @@ import urllib
 from bicycle import Bicycle
 from human import Human
 
-#TODO: tests
 #TODO: error handlin & log - dict keywords checks
 #TODO: improve readme (cli help kopiraj, setup kako se radi)
 #TODO: sort out human_id - object_id - bicycle_id
@@ -62,7 +61,6 @@ def load_json_from_file_url(input_json):
         if urllib.parse.urlparse(input_json).scheme != "":
             response = requests.get(input_json)
             annotations_list = json.loads(response.text)
-            #https://jsonplaceholder.typicode.com/todos
         else:
             with open(input_json) as input_json_file:
                 annotations_list = json.load(input_json_file)
@@ -75,7 +73,7 @@ def load_json_from_file_url(input_json):
         return None
 
 
-def parse_annotations_from_file(input_json):
+def parse_annotations(input_json):
     annotations_list = load_json_from_file_url(input_json)
     parsed_list = []
     if annotations_list:
@@ -88,7 +86,8 @@ def parse_annotations_from_file(input_json):
         # human_id = 0
         # bicycle_id = 0
         for annotation_input in annotations_list:
-            if annotation_input['label'] == 'HUMAN':
+            label_exists = 'label' in annotation_input.keys()
+            if label_exists and annotation_input['label'] == 'HUMAN':
                 human = Human(annotation_input)
                 if human.temporal_id in temporal_id_object_id_dict.keys():
                     human.human_id = temporal_id_object_id_dict[human.temporal_id]
@@ -100,7 +99,7 @@ def parse_annotations_from_file(input_json):
                     rider_bike_dict[human.bicycle_id] = (human.temporal_id, human.human_id)
                 parsed_list.append(human)
 
-            elif annotation_input['label'] == 'BICYCLE':
+            elif label_exists and annotation_input['label'] == 'BICYCLE':
                 bicycle = Bicycle(annotation_input)
                 if bicycle.temporal_id in temporal_id_object_id_dict.keys():
                     bicycle.bicycle_id = temporal_id_object_id_dict[bicycle.temporal_id]
@@ -109,6 +108,9 @@ def parse_annotations_from_file(input_json):
                     temporal_id_object_id_dict[bicycle.temporal_id] = object_id
                     object_id+=1
                 parsed_list.append(bicycle)
+
+            elif not label_exists:
+                log.error('Input json file is missing label keyword! Not able to parse it.')
 
         for item in parsed_list:
             if isinstance(item, Bicycle):
@@ -123,7 +125,7 @@ def parse_annotations_from_file(input_json):
 
 
 def convert_json(input_json, output_json):
-    parsed_list = parse_annotations_from_file(input_json)
+    parsed_list = parse_annotations(input_json)
     if len(parsed_list) > 0:
         output_dict = {}
         output_dict['FRAMES'] = []
