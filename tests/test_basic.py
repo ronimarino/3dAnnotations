@@ -4,7 +4,6 @@ from .context import helpers
 from .context import annotations
 from .context import bicycle
 from .context import human
-from .test_utility import assertDictAlmostEqual
 
 
 class BasicTests(unittest.TestCase):
@@ -84,8 +83,8 @@ class BasicTests(unittest.TestCase):
         }
         bike_dict = bike.generate_bicycle_dict()
         human_dict = person.generate_human_dict()
-        assertDictAlmostEqual(self, test_bike_dict, bike_dict)
-        assertDictAlmostEqual(self, test_human_dict, human_dict)
+        helpers.assertDictAlmostEqual(self, test_bike_dict, bike_dict)
+        helpers.assertDictAlmostEqual(self, test_human_dict, human_dict)
 
 
 
