@@ -9,6 +9,21 @@ from .context import human
 class BasicTests(unittest.TestCase):
     """Basic test cases."""
 
+    def assertDictAlmostEqual(self, d1, d2, msg=None, places=7):
+
+        # check if both inputs are dicts
+        self.assertIsInstance(d1, dict, 'First argument is not a dictionary')
+        self.assertIsInstance(d2, dict, 'Second argument is not a dictionary')
+
+        # check if both inputs have the same keys
+        self.assertEqual(d1.keys(), d2.keys())
+
+        # check each key
+        for key, value in d1.items():
+            if isinstance(value, dict):
+                self.assertDictAlmostEqual(d1[key], d2[key], msg=msg)
+            else:
+                self.assertAlmostEqual(d1[key], d2[key], places=places, msg=msg)
 
     def test_euler_to_quaternion(self):
         self.assertEqual(helpers.euler_to_quaternion(0., 0., 0.), [0,0,0,1])
@@ -83,8 +98,8 @@ class BasicTests(unittest.TestCase):
         }
         bike_dict = bike.generate_bicycle_dict()
         human_dict = person.generate_human_dict()
-        self.assertEqual(test_bike_dict, bike_dict)
-        self.assertEqual(test_human_dict, human_dict)
+        self.assertDictAlmostEqual(test_bike_dict, bike_dict)
+        self.assertDictAlmostEqual(test_human_dict, human_dict)
 
 
 

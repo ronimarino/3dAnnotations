@@ -9,11 +9,12 @@ class Bicycle(Entry):
 
     def __init__(self, data):
         super().__init__(data)
+        data_valid = True
         if 'attributes' in data.keys():
             data_valid = set(keyword_list_bike_attributes).issubset(set(data['attributes'].keys()))
-            if data_valid:
-                self.status = status_dict[data['attributes']['status']]
-                self.b_type = type_dict[data['attributes']['type']]
+        if data_valid:
+            self.status = status_dict[data['attributes']['status']]
+            self.b_type = type_dict[data['attributes']['type']]
         else:
             self.is_valid = False
             self.status = None
