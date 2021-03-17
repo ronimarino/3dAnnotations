@@ -2,6 +2,7 @@
 import unittest
 import json
 from .context import annotations
+from .test_utility import assertDictAlmostEqual
 
 
 
@@ -18,7 +19,7 @@ class AdvancedTests(unittest.TestCase):
         with open('docs/example_output.json') as input_json_file:
             correct_converted_json = json.load(input_json_file)
         
-        self.assertEqual(test_converted_json, correct_converted_json)
+        assertDictAlmostEqual(self, test_converted_json, correct_converted_json)
 
 
 if __name__ == '__main__':
