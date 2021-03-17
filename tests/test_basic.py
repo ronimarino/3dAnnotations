@@ -24,7 +24,7 @@ class BasicTests(unittest.TestCase):
                 self.assertDictAlmostEqual(d1[key], d2[key], msg=msg)
             elif isinstance(value, list):
                 for val in value:
-                    self.assertDictAlmostEqual(val, val, msg=msg)
+                    self.assertAlmostEqual(val, val, places=places, msg=msg)
             else:
                 self.assertAlmostEqual(d1[key], d2[key], places=places, msg=msg)
 
