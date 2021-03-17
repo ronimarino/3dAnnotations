@@ -1,0 +1,11 @@
+name: TestAdvanced
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements.txt 
+      - run: python -m unittest tests.test_advanced
